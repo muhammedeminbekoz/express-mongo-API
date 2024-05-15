@@ -1,6 +1,7 @@
 const User = require('../models/user.model')
 const bcrypt = require('bcrypt');
 const APIError = require('../utils/errors');
+const Response = require('../utils/response');
 
 const login = async (req, res) => {
     console.log(req.body);
@@ -19,21 +20,15 @@ const register = async (req, res) => {
 
     req.body.password = await bcrypt.hash(req.body.password, 10)
 
-    console.log("hash şifre", req.body.password)
+    const saveUser = new User(req.body)
+    await saveUser.save()
+        .then((data) => {
+            return new Response(data, "Kayıt Başarıyla eklendi").created(res)
+        }).catch((err) => {
+            throw new APIError("Kullanıcı kayıt edilemedi", 400)
+        })
 
-    try {
-        const saveUser = new User(req.body)
-        await saveUser.save()
-            .then((response) => {
-                return res.status(201).json({ success: true, data: response })
-            }).catch((err) => {
-                console.log(err)
-                return res.status(400).json({ success: false, data: err })
-            })
-    }
-    catch (err) {
-        console.log(err)
-    }
+
 }
 
 module.exports = {
