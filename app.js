@@ -1,6 +1,7 @@
 require('express-async-errors')
 const express = require('express');
 const app = express();
+const mongoSanitize = require('express-mongo-sanitize')
 require('dotenv').config();
 require('./src/db/dbConnection');
 const port = process.env.PORT || 3000;
@@ -13,11 +14,19 @@ const corsOptions = require('./src/helpers/corsOptions');
 app.use(cors(corsOptions))
 app.use(express.json())
 
+app.use(
+    mongoSanitize({
+        allowDots: true,
+        replaceWith: '_',
+    }),
+);
+
 app.get('/', (req, res) => {
     res.json({ message: "hello world" })
 })
 
 app.use("/api", router);
+
 
 
 // hata yakalma
