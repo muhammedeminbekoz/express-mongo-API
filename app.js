@@ -1,6 +1,7 @@
 require('express-async-errors')
 const express = require('express');
 const app = express();
+const path = require('path')
 const mongoSanitize = require('express-mongo-sanitize')
 require('dotenv').config();
 require('./src/db/dbConnection');
@@ -14,6 +15,8 @@ const corsOptions = require('./src/helpers/corsOptions');
 app.use(cors(corsOptions))
 app.use(express.json())
 
+app.use(express.static(path.join(__dirname, "public")))
+app.use("/uploads", express.static(__dirname))
 app.use(
     mongoSanitize({
         allowDots: true,
