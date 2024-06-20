@@ -10,12 +10,15 @@ const router = require('./src/routers/index');
 const errorHandlerMiddleware = require('./src/middlewares/errorHandler')
 const cors = require('cors');
 const corsOptions = require('./src/helpers/corsOptions');
+const limiter = require('./src/middlewares/rateLimit');
 
 //middlewares
 app.use(cors(corsOptions))
 app.use(express.json())
 
 app.use(express.static(path.join(__dirname, "public")))
+app.use('/api', limiter)
+
 app.use("/uploads", express.static(__dirname))
 app.use(
     mongoSanitize({
